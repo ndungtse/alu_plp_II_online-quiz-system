@@ -91,7 +91,7 @@ def view_score_history():
 
 def show_menu():
     """Print the main menu."""
-    print("\n===== ONLINE QUIZ SYSTEM =====")
+    print("\n===== ONLINE QUIZ SYSTEM (MySQL Edition) =====")
     print("1. Take a Quiz")
     print("2. Add a Question (Admin)")
     print("3. View Score History")
