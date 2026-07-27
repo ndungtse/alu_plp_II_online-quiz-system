@@ -1,29 +1,25 @@
 -- Online Quiz System - database schema
 -- The application creates this automatically on first run, but you can also
--- run this file manually with:  mysql -u root -p < schema.sql
-
-CREATE DATABASE IF NOT EXISTS quiz_db
-    CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-USE quiz_db;
+-- run this file manually with:  sqlite3 quiz.db < schema.sql
 
 CREATE TABLE IF NOT EXISTS questions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    level ENUM('easy','medium','hard') NOT NULL DEFAULT 'easy',
-    question_text VARCHAR(500) NOT NULL,
-    option_a VARCHAR(255) NOT NULL,
-    option_b VARCHAR(255) NOT NULL,
-    option_c VARCHAR(255) NOT NULL,
-    option_d VARCHAR(255) NOT NULL,
-    correct_option CHAR(1) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    level TEXT NOT NULL DEFAULT 'easy'
+        CHECK (level IN ('easy', 'medium', 'hard')),
+    question_text TEXT NOT NULL,
+    option_a TEXT NOT NULL,
+    option_b TEXT NOT NULL,
+    option_c TEXT NOT NULL,
+    option_d TEXT NOT NULL,
+    correct_option TEXT NOT NULL,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS scores (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    player_name VARCHAR(100) NOT NULL,
-    level VARCHAR(10) NOT NULL,
-    score INT NOT NULL,
-    total INT NOT NULL,
-    taken_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    player_name TEXT NOT NULL,
+    level TEXT NOT NULL,
+    score INTEGER NOT NULL,
+    total INTEGER NOT NULL,
+    taken_at TEXT DEFAULT CURRENT_TIMESTAMP
 );

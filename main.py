@@ -1,24 +1,20 @@
 """Online Quiz System - command-line, menu-driven application.
 
 This is the entry point. It shows the main menu and calls the right function
-for each option. Quiz data and scores are stored in a MySQL database.
+for each option. Quiz data and scores are stored in a SQLite database.
 
 Run with:  python main.py
 """
 
+import sqlite3
 import sys
-
-from mysql.connector import Error
 
 import database
 import quiz
 
-LEVELS = database.LEVELS  # ("easy", "medium", "hard")
+LEVELS = database.LEVELS
 
 
-# --------------------------------------------------------------------------- #
-# Small input helpers (used to validate what the user types)
-# --------------------------------------------------------------------------- #
 def prompt_nonempty(message):
     """Ask for text and keep asking until the user types something."""
     while True:
@@ -46,9 +42,6 @@ def prompt_level():
     return {"1": "easy", "2": "medium", "3": "hard"}[choice]
 
 
-# --------------------------------------------------------------------------- #
-# Menu actions
-# --------------------------------------------------------------------------- #
 def take_quiz():
     """Option 1: let a user take a quiz."""
     player_name = prompt_nonempty(">>> Enter your name: ")
@@ -85,7 +78,7 @@ def view_score_history():
     print("-" * 60)
     for row in rows:
         score_text = f"{row['score']}/{row['total']}"
-        taken = row["taken_at"].strftime("%Y-%m-%d %H:%M")
+        taken = str(row["taken_at"])[:16]
         print(f"{row['player_name']:<20}{row['level']:<10}{score_text:<10}{taken}")
 
 
@@ -101,12 +94,10 @@ def show_menu():
 def main():
     """Set up the database, then run the main menu loop."""
     print("Welcome to the Online Quiz System!")
-    print("Connecting to the database...")
+    print("Initialising the database...")
 
-    # Make sure the database and tables exist before we do anything else.
     if not database.init_database():
-        print("\nCould not connect to the database. Please check your settings")
-        print("in config.py / .env and make sure the MySQL server is running.")
+        print("\nCould not set up the database. Please check DB_PATH in .env.")
         sys.exit(1)
 
     database.seed_questions_if_empty()
@@ -126,8 +117,7 @@ def main():
             elif choice == "4":
                 print("\nThank you for using the Online Quiz System. Goodbye!")
                 break
-        except Error as exc:
-            # Catch any database error during an action so the app does not crash.
+        except sqlite3.Error as exc:
             print(f"\n[Database error] {exc}")
             print("Returning to the main menu.")
 
