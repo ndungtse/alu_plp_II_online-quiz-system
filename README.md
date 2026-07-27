@@ -1,6 +1,6 @@
 # Online Quiz System
 
-A menu-driven, command-line quiz application written in Python, using a **MySQL**
+A menu-driven, command-line quiz application written in Python, using a **SQLite**
 database to store quiz questions and player scores. Built for the Peer Learning
 Project (Group 26).
 
@@ -18,17 +18,16 @@ Project (Group 26).
 | ---- | ------- |
 | `main.py` | Entry point: the menu loop and input validation. |
 | `quiz.py` | Runs a single quiz (asks questions, keeps score). |
-| `database.py` | All MySQL connection and query logic. |
+| `database.py` | All SQLite connection and query logic. |
 | `config.py` | Reads DB settings from environment / `.env`. |
 | `schema.sql` | The database schema (also created automatically on first run). |
-| `requirements.txt` | Python dependencies. |
 | `.env.example` | Template for your local database settings. |
 
 ## Requirements
 
 - Python 3.8+
-- A running MySQL (or MariaDB) server
-- The `mysql-connector-python` package
+
+No external packages are required; the app uses Python's built-in `sqlite3` module.
 
 ## Setup
 
@@ -39,41 +38,27 @@ python3 -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 ```
 
-### 2. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Configure the database connection
+### 2. Configure the database path (optional)
 
 ```bash
 cp .env.example .env
 ```
 
-Then edit `.env` with your MySQL host, user, and password.
+By default the app creates `quiz.db` in the project folder. Change `DB_PATH` in
+`.env` if you want the file somewhere else.
 
-### 4. Create the database user (one-time, run in MySQL as an admin)
-
-```sql
-CREATE DATABASE IF NOT EXISTS quiz_db;
-CREATE USER IF NOT EXISTS 'quiz_user'@'localhost' IDENTIFIED BY 'quiz_pass';
-GRANT ALL PRIVILEGES ON quiz_db.* TO 'quiz_user'@'localhost';
-FLUSH PRIVILEGES;
-```
-
-> The application will create the tables and seed starter questions automatically
-> the first time it runs, so you do **not** need to run `schema.sql` by hand.
-
-### 5. Run the app
+### 3. Run the app
 
 ```bash
 python main.py
 ```
 
+The database file, tables, and starter questions are created automatically on
+first run.
+
 ## Notes
 
 - On first run the app creates the `questions` and `scores` tables and inserts a
   set of starter questions if the table is empty.
-- Database credentials are read from environment variables (or the `.env` file);
-  the `.env` file is git-ignored so secrets are not committed.
+- The database path is read from environment variables (or the `.env` file);
+  the `.env` file is git-ignored so local overrides are not committed.

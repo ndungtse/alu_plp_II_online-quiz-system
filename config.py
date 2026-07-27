@@ -8,8 +8,8 @@ the `.env` file.
 
 import os
 
-# Path to an optional .env file in the same directory as this script.
 _ENV_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def _load_env_file(path):
@@ -33,15 +33,6 @@ def _load_env_file(path):
 
 _load_env_file(_ENV_PATH)
 
-
-# Database connection settings (with sensible local defaults).
-DB_CONFIG = {
-    "host": os.environ.get("DB_HOST", "127.0.0.1"),
-    "port": int(os.environ.get("DB_PORT", "3306")),
-    "user": os.environ.get("DB_USER", "quiz_user"),
-    "password": os.environ.get("DB_PASSWORD", "quiz_pass"),
-    "database": os.environ.get("DB_NAME", "quiz_db"),
-}
-
-# Name of the database (kept separate so we can create it before connecting to it).
-DB_NAME = DB_CONFIG["database"]
+_DEFAULT_DB_PATH = os.path.join(_BASE_DIR, "quiz.db")
+_db_path = os.environ.get("DB_PATH", _DEFAULT_DB_PATH)
+DB_PATH = _db_path if os.path.isabs(_db_path) else os.path.join(_BASE_DIR, _db_path)

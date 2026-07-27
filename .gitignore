@@ -1,6 +1,9 @@
 # Local environment / secrets
 .env
 
+# SQLite database
+quiz.db
+
 # Python
 __pycache__/
 *.pyc
