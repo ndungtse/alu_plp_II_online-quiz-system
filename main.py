@@ -89,6 +89,45 @@ def view_score_history():
         print(f"{row['player_name']:<20}{row['level']:<10}{score_text:<10}{taken}")
 
 
+
+
+def show_leaderboard():
+    """Display top quiz players."""
+    print("\n--- Leaderboard ---")
+
+    rows = database.get_score_history(limit=100)
+
+    if not rows:
+        print("No scores available.")
+        return
+
+    ranking = {}
+
+    for row in rows:
+        name = row["player_name"]
+
+        percentage = (row["score"] / row["total"]) * 100
+
+        if name not in ranking:
+            ranking[name] = []
+
+        ranking[name].append(percentage)
+
+    results = []
+
+    for name, scores in ranking.items():
+        average = sum(scores) / len(scores)
+        results.append((name, average))
+
+    results.sort(key=lambda x: x[1], reverse=True)
+
+    print(f"{'Player':<20}{'Average Score'}")
+    print("-" * 40)
+
+    for player, score in results[:10]:
+        print(f"{player:<20}{score:.2f}%")
+
+        
 def show_menu():
     """Print the main menu."""
     print("\n===== ONLINE QUIZ SYSTEM (MySQL Edition) =====")
@@ -96,6 +135,21 @@ def show_menu():
     print("2. Add a Question (Admin)")
     print("3. View Score History")
     print("4. Exit")
+    print("6. Leaderboard")
+    print("7. About System")
+
+def show_about():
+    print("""
+--- About Online Quiz System ---
+
+Features:
+- Multiple difficulty levels
+- MySQL database storage
+- Score tracking
+- Admin question management
+
+Developed as a command-line quiz application.
+""")
 
 
 def main():
