@@ -38,7 +38,7 @@ def prompt_level():
     """Ask the user to pick a difficulty level and return it as text."""
     print("\nSelect a level:")
     print("  1. Easy   2. Medium   3. Hard")
-    choice = prompt_menu_choice(">>> Enter your choice (1-3): ", [1, 2, 3])
+    choice = prompt_menu_choice(">>> Enter your choice (1-3): ", [1, 2, 3,])
     return {"1": "easy", "2": "medium", "3": "hard"}[choice]
 
 
@@ -159,7 +159,7 @@ def main():
 
     while True:
         show_menu()
-        choice = prompt_menu_choice(">>> Enter your choice (1-4): ", [1, 2, 3, 4])
+        choice = prompt_menu_choice(">>> Enter your choice (1-4): ", [1, 2, 3, 4, 6, 7])
 
         try:
             if choice == "1":
