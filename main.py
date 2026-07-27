@@ -273,6 +273,118 @@ def view_all_scores():
         print(f"{row['player_name']:<20}{row['level']:<10}{score_text:<10}{taken}")
 
 
+def recommend_next_level(user):
+    """Recommend the next quiz level based on the user's average score."""
+
+    history = database.get_scores_by_user(user["id"], limit=10)
+
+    if not history:
+        print("\nNo previous quiz history.")
+        print("Recommended Level: Easy")
+        return "easy"
+
+    average = sum((row["score"] / row["total"]) * 100 for row in history) / len(history)
+
+    if average >= 80:
+        level = "Hard"
+    elif average >= 60:
+        level = "Medium"
+    else:
+        level = "Easy"
+
+    print("\n===== LEVEL RECOMMENDATION =====")
+    print(f"Average Score : {average:.1f}%")
+    print(f"Recommended   : {level}")
+
+    return level.lower()
+
+
+def generate_progress_report(user):
+    """Display a complete progress report."""
+
+    history = database.get_scores_by_user(user["id"], limit=100)
+
+    if not history:
+        print("\nNo quiz history found.")
+        return
+
+    total_quizzes = len(history)
+
+    percentages = [
+        (row["score"] / row["total"]) * 100
+        for row in history
+    ]
+
+    average = sum(percentages) / total_quizzes
+    highest = max(percentages)
+    lowest = min(percentages)
+
+    levels = {}
+
+    for row in history:
+        levels[row["level"]] = levels.get(row["level"], 0) + 1
+
+    favourite = max(levels, key=levels.get)
+
+    first = percentages[-1]
+    latest = percentages[0]
+    improvement = latest - first
+
+    print("\n========== PROGRESS REPORT ==========")
+    print(f"Total Quizzes   : {total_quizzes}")
+    print(f"Average Score   : {average:.2f}%")
+    print(f"Highest Score   : {highest:.2f}%")
+    print(f"Lowest Score    : {lowest:.2f}%")
+    print(f"Favourite Level : {favourite.title()}")
+    print(f"Improvement     : {improvement:+.2f}%")
+
+def show_most_active_users():
+    """Display users who have taken the most quizzes."""
+
+    history = database.get_score_history(limit=1000)
+
+    if not history:
+        print("No quiz history available.")
+        return
+
+    activity = {}
+
+    for row in history:
+        name = row["player_name"]
+        activity[name] = activity.get(name, 0) + 1
+
+    ranking = sorted(
+        activity.items(),
+        key=lambda item: item[1],
+        reverse=True
+    )
+
+    print("\n====== MOST ACTIVE USERS ======")
+
+    for i, (name, quizzes) in enumerate(ranking[:10], start=1):
+        print(f"{i:>2}. {name:<20} {quizzes} quizzes")
+
+def predict_final_score(correct_answers, answered_questions, total_questions):
+    """
+    Predict the final score based on the user's current performance.
+    """
+
+    if answered_questions == 0:
+        return 0
+
+    accuracy = correct_answers / answered_questions
+
+    predicted = round(accuracy * total_questions)
+
+    print("\n===== SCORE PREDICTION =====")
+    print(f"Answered      : {answered_questions}/{total_questions}")
+    print(f"Correct       : {correct_answers}")
+    print(f"Accuracy      : {accuracy*100:.1f}%")
+    print(f"Predicted End : {predicted}/{total_questions}")
+
+    return predicted
+
+
 def show_about():
     """Print information about the system."""
     print("""
@@ -301,10 +413,13 @@ def admin_menu(user):
         print("3. Update a Question")
         print("4. Delete a Question")
         print("5. View All Scores")
-        print("6. About")
-        print("7. Logout")
+        print("6. Most Active Users")
+        print("7. About")
+        print("8. Logout")
+
+
         choice = prompt_menu_choice(
-            ">>> Enter your choice (1-7): ", [1, 2, 3, 4, 5, 6, 7]
+            ">>> Enter your choice (1-8): ", [1, 2, 3, 4, 5, 6, 7, 8]
         )
 
         try:
@@ -319,7 +434,15 @@ def admin_menu(user):
             elif choice == "5":
                 view_all_scores()
             elif choice == "6":
+                show_most_active_users()
+            elif choice == "7":
                 show_about()
+            elif choice == "8":
+                recommend_next_level(user)
+            elif choice == "9":
+                generate_progress_report(user)
+            elif choice == "10":
+                show_most_active_users()
             elif choice == "7":
                 print(f"\nLogged out. Goodbye, {user['username']}!")
                 return
@@ -335,9 +458,11 @@ def user_menu(user):
         print("1. Take a Quiz")
         print("2. View My History")
         print("3. Leaderboard")
-        print("4. About")
-        print("5. Logout")
-        choice = prompt_menu_choice(">>> Enter your choice (1-5): ", [1, 2, 3, 4, 5])
+        print("4. Recommend Next Level")
+        print("5. Progress Report")
+        print("6. About")
+        print("7. Logout")
+        choice = prompt_menu_choice(">>> Enter your choice (1-7): ", [1, 2, 3, 4, 5, 6, 7])
 
         try:
             if choice == "1":
@@ -348,6 +473,10 @@ def user_menu(user):
                 show_leaderboard()
             elif choice == "4":
                 show_about()
+            elif choice == "6":
+                recommend_next_level(user)
+            elif choice == "7":
+                generate_progress_report(user)
             elif choice == "5":
                 print(f"\nLogged out. Goodbye, {user['username']}!")
                 return
