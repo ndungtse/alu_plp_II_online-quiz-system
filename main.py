@@ -127,9 +127,9 @@ def show_menu():
     print("1. Take a Quiz")
     print("2. Add a Question (Admin)")
     print("3. View Score History")
-    print("4. Exit")
     print("5. Leaderboard")
     print("6. About System")
+    print("4. Exit")
 
 def show_about():
     print("""
