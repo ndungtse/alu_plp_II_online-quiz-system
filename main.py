@@ -168,6 +168,10 @@ def main():
                 add_question()
             elif choice == "3":
                 view_score_history()
+            elif choice == "6":
+                show_leaderboard()
+            elif choice == "7":
+                show_about()
             elif choice == "4":
                 print("\nThank you for using the Online Quiz System. Goodbye!")
                 break
