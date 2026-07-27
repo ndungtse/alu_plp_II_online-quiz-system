@@ -128,8 +128,8 @@ def show_menu():
     print("2. Add a Question (Admin)")
     print("3. View Score History")
     print("4. Exit")
-    print("6. Leaderboard")
-    print("7. About System")
+    print("5. Leaderboard")
+    print("6. About System")
 
 def show_about():
     print("""
@@ -159,7 +159,7 @@ def main():
 
     while True:
         show_menu()
-        choice = prompt_menu_choice(">>> Enter your choice (1-4): ", [1, 2, 3, 4, 6, 7])
+        choice = prompt_menu_choice(">>> Enter your choice (1-6): ", [1, 2, 3, 4, 5, 6])
 
         try:
             if choice == "1":
@@ -168,9 +168,9 @@ def main():
                 add_question()
             elif choice == "3":
                 view_score_history()
-            elif choice == "6":
+            elif choice == "5":
                 show_leaderboard()
-            elif choice == "7":
+            elif choice == "6":
                 show_about()
             elif choice == "4":
                 print("\nThank you for using the Online Quiz System. Goodbye!")
