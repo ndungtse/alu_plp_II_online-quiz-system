@@ -2,6 +2,15 @@
 -- The application creates this automatically on first run, but you can also
 -- run this file manually with:  sqlite3 quiz.db < schema.sql
 
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'user'
+        CHECK (role IN ('admin', 'user')),
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS questions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     level TEXT NOT NULL DEFAULT 'easy'
@@ -17,6 +26,7 @@ CREATE TABLE IF NOT EXISTS questions (
 
 CREATE TABLE IF NOT EXISTS scores (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
     player_name TEXT NOT NULL,
     level TEXT NOT NULL,
     score INTEGER NOT NULL,

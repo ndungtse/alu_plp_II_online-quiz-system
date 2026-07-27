@@ -32,22 +32,22 @@ def _ask_question(question, number, total):
     return False
 
 
-def run_quiz(player_name, level):
-    """Run a full quiz for the given player and level.
+def run_quiz(user, level):
+    """Run a full quiz for the logged-in user and level.
 
-    Returns a tuple (score, total). If there are no questions for the level,
-    returns (0, 0).
+    `user` is a dict with at least 'id' and 'username'. Returns a tuple
+    (score, total). If there are no questions for the level, returns (0, 0).
     """
     questions = database.get_questions_by_level(level, limit=5)
     total = len(questions)
 
     if total == 0:
         print(f"\nSorry, there are no questions for the '{level}' level yet.")
-        print("Ask an admin to add some from the main menu.")
+        print("Ask an admin to add some from the admin menu.")
         return 0, 0
 
     print(f"\n*** This is the {level.capitalize()} Level ***")
-    print(f"You will be asked {total} question(s). Good luck, {player_name}!")
+    print(f"You will be asked {total} question(s). Good luck, {user['username']}!")
 
     score = 0
     for index, question in enumerate(questions, start=1):
@@ -58,7 +58,7 @@ def run_quiz(player_name, level):
     print("\n" + "=" * 40)
     print(f"Quiz complete! You scored {score} out of {total} ({percentage:.0f}%).")
 
-    database.save_score(player_name, level, score, total)
+    database.save_score(user["id"], user["username"], level, score, total)
     print("Your result has been saved.")
     print("=" * 40)
     return score, total
